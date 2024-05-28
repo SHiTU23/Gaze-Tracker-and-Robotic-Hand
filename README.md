@@ -10,9 +10,10 @@ Control A Robotic Hand using Gaze Tracker headset
 + [Headset SetUp](#headset-setup)
     + [Headset Cameras Adjustment](#adjust-the-headset-cameras)
     + [Start Calibration](#start-calibrating)
-+ [Real-Time Data](#recieve-data)
-    + [Record Data](#pupil-remote---record-data)
-    + [Export Data from Recordings](#export-data-from-recordings)
++ [Recieve Data](#recieve-data)
+    + [Pupil Remote - Record Data](#pupil-remote---record-data)
+        + [Export Data from Recordings](#export-data-from-recordings)
+    + [IPC Backbone - Real-Time Data](#ipc-backbone---real-time-data)
 
 
 <br>
@@ -127,3 +128,51 @@ Upload the folder containing recordings into ***`Pupil Player`*** and press ***`
 More information can be found [here](https://docs.pupil-labs.com/core/getting-started/#_5-start-recording) and [here.](https://docs.pupil-labs.com/core/developer/network-api/#pupil-remote)
 <br>
 
+### IPC Backbone - Real-Time Data
+Using `IPC Backbone` gives access to the data from Pupil capture and Service, realtime. \
+It uses ZeroMQ's `PUB-SUB`(Publisher-Subscriber) pattern for one-to-many communication. Note that when you use a SUB socket you must set a subscription using zmq_setsockopt() and SUBSCRIBE, as in this code. [More Info](https://zguide.zeromq.org/docs/chapter1/#Getting-the-Message-Out)
+
+For IPC Backbone both the IP address and the session's unique port are needed:
+
+```py
+import zmq
+ctx = zmq.Context()
+# The REQ talks to Pupil remote and receives the session unique IPC SUB PORT
+pupil_remote = ctx.socket(zmq.REQ)
+
+ip = 'localhost'  # If you talk to a different machine use its IP.
+port = 50020  # The port defaults to 50020. Set in Pupil Capture GUI.
+
+pupil_remote.connect(f'tcp://{ip}:{port}')
+
+# Request 'SUB_PORT' for reading data
+pupil_remote.send_string('SUB_PORT')
+sub_port = pupil_remote.recv_string()
+
+# Request 'PUB_PORT' for writing data
+pupil_remote.send_string('PUB_PORT')
+pub_port = pupil_remote.recv_string()
+```
+
+Now, for reading data, the `desired data` should be `subscribed` to  `topic`. Here, we only care about `gaze` data. Therefore, the rest of th code would be as bellow:
+
+```py
+while True:
+    subscriber = ctx.socket(zmq.SUB)
+    subscriber.connect(f'tcp://{ip}:{sub_port}')
+    subscriber.subscribe('gaze.')  # receive all gaze messages
+
+    topic, payload = subscriber.recv_multipart()
+    message = msgpack.loads(payload)
+    
+    print(f"{topic}: {message}") ### The whole data
+```
+
+Export only the gazed point's coodinates:
+```py
+### Coordinates of the point that is being looked at:
+print(message[b'gaze_point_3d'])
+```
+> ***Note*** : ***`Pupile Capture`*** should be kept open while data is being read.
+
+More information about [IPC Backbone](https://docs.pupil-labs.com/core/developer/network-api/#ipc-backbone) and [data format](https://docs.pupil-labs.com/core/developer/#pupil-datum-format)
