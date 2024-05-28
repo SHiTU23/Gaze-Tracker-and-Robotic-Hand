@@ -38,9 +38,16 @@ Now, it's time to caliberate the headset to understands at which object you are 
 >   + **Single Marker** : is Used when you want to calibrate the headset using physical markers.
 >   + **Natural Feature** : You define where you are looking at by clicking and selecting the area of scene on the screen. 
 >
+> By clicking on ***C*** Botton on the screen or from keyboard, calibration process gets started.
 
 
 <img width = "300" hight = "200" src="./pics/calibration.png" >
+
+> ***Notes for calibration***
+> + If the screen keeps blinking, you may need to turn off the *Use fullscreen* mode, and maximize the window quickly. 
+> + Decreasing the *Marker Size* results in a more precise caliberation.
+> + Also, **2D** *Gze Mapping* gives the best accuracy, yet it is very sensitive to slippage.   
+[More Information](https://docs.pupil-labs.com/core/best-practices/#choose-the-right-gaze-mapping-pipeline)
 
 Once the calibration is finished, a pink circle apears on the screen which shows at where you are looking.
 Then, evaluate the calibration by looking at different objects to see how accurate it works. If not accurate enough, start calibrating over again. 
@@ -49,4 +56,4 @@ Then, evaluate the calibration by looking at different objects to see how accura
 
 ***Note*** : Each time that you reopen the **Pupile Capture** software, you need to caliberate the headset again. Even if you haven't changed your or cameras' positions.
 
-> **Make sure to ckeck for more information for [getting started](https://docs.pupil-labs.com/core/software/pupil-capture/) and [calibration best practice](https://docs.pupil-labs.com/core/best-practices/#synchronization)**
+> **Make sure to ckeck for more information for [Getting Started](https://docs.pupil-labs.com/core/software/pupil-capture/) and [Calibration Best Practice](https://docs.pupil-labs.com/core/best-practices/#synchronization)**
