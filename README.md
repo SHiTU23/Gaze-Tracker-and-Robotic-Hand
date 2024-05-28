@@ -26,3 +26,25 @@ First, adjust the cameras to get the most accurate result from caliberation.
 
 Now, it's time to caliberate the headset to understands at which object you are looking.
 
+### Start Calibrating
+> Make sure at least one of the eye cameras are chosen for the caliberation.
+
+<img width = "300" hight = "200" src="./pics/general_setting.png" >
+
+### Calibration Settings
+> There are **three** modes for calibrating the headset, can be chosen from *Choreolography* dropdown menue:
+>   + **Screen Marker** : The easiest way of calibration. Some markers will appear on the screen and you need to look at them without moving your head until they get disappear.\
+***KEEP THAT IN MIND DO NOT MOVE AT ALL.***
+>   + **Single Marker** : is Used when you want to calibrate the headset using physical markers.
+>   + **Natural Feature** : You define where you are looking at by clicking and selecting the area of scene on the screen. 
+>
+
+
+<img width = "300" hight = "200" src="./pics/calibration.png" >
+
+Once the calibration is finished, a pink circle apears on the screen which shows at where you are looking.
+Then, evaluate the calibration by looking at different objects to see how accurate it works. If not accurate enough, start calibrating over again. 
+
+> ***NOTE***: You might need to recalibrate the headset multiple times. So, after finishing calibration, evalute the accuracy. 
+
+***Note*** : Each time that you reopen the **Pupile Capture** software, you need to caliberate the headset again. Even if you haven't changed your or cameras' positions.
