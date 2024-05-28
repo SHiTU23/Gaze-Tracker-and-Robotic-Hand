@@ -5,11 +5,20 @@ Control A Robotic Hand using Gaze Tracker headset
 
 <br>
 
+## Content
+### Gaze Tracker 
++ [Headset SetUp](#headset-setup)
+    + [Headset Cameras Adjustment](#adjust-the-headset-cameras)
+    + [Start Calibration](#start-calibrating)
+
+
+<br>
+
 ## Headset Setup
 A few steps should be taken to get ready for using data.
 > Install **Pupil Core Bundles** from [here](https://docs.pupil-labs.com/core/getting-started/)
 
-### Caliberate the Headset
+### Adjust the Headset Cameras
 First, adjust the cameras to get the most accurate result from caliberation.
 >
 > + Adjust the Eye Camera \
@@ -31,7 +40,8 @@ Now, it's time to caliberate the headset to understands at which object you are 
 
 <img width = "300" hight = "200" src="./pics/general_setting.png" >
 
-### Calibration Settings
+<br>
+
 > There are **three** modes for calibrating the headset, can be chosen from *Choreolography* dropdown menue:
 >   + **Screen Marker** : The easiest way of calibration. Some markers will appear on the screen and you need to look at them without moving your head until they get disappear.\
 ***KEEP THAT IN MIND DO NOT MOVE AT ALL.***
