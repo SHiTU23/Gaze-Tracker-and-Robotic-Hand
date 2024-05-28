@@ -45,6 +45,8 @@ Now, it's time to caliberate the headset to understands at which object you are 
 Once the calibration is finished, a pink circle apears on the screen which shows at where you are looking.
 Then, evaluate the calibration by looking at different objects to see how accurate it works. If not accurate enough, start calibrating over again. 
 
-> ***NOTE***: You might need to recalibrate the headset multiple times. So, after finishing calibration, evalute the accuracy. 
+***Note***: You might need to recalibrate the headset multiple times. So, after finishing calibration, evalute the accuracy. 
 
 ***Note*** : Each time that you reopen the **Pupile Capture** software, you need to caliberate the headset again. Even if you haven't changed your or cameras' positions.
+
+> **Make sure to ckeck for more information for [getting started](https://docs.pupil-labs.com/core/software/pupil-capture/) and [calibration best practice](https://docs.pupil-labs.com/core/best-practices/#synchronization)**
