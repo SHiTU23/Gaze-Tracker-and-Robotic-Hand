@@ -16,6 +16,7 @@ Control A Robotic Hand using Gaze Tracker headset
     + [IPC Backbone - Real-Time Data](#ipc-backbone---real-time-data)
 
 ### [Robotic Hand](#robotic-hand-1)
++ [Setup](#setup)
 
 
 
@@ -186,11 +187,11 @@ More information about [IPC Backbone](https://docs.pupil-labs.com/core/developer
 # Robotic Hand
 
 ## Setup
-RH4D Advanced Manipulator is the robot hand that is being used for this project.
+RH4D Advanced Manipulator is the robotic hand that is being used for this project.
 
 First, it is better to start with ***`Roboplus`*** software to get familiar with it.
 
-> `RoboPlus` can be found from [here](https://robotis.co.uk/software/roboplus-1-0.html) or directly downloaded from [here.](http://en.robotis.com/service/download.php?no=14)
+> `RoboPlus` can be found [here](https://robotis.co.uk/software/roboplus-1-0.html) or directly downloaded from [here.](http://en.robotis.com/service/download.php?no=14)
 
 1. Run the program and go to `Epert > Dynamixel Wizard`.
 
@@ -211,3 +212,54 @@ First, it is better to start with ***`Roboplus`*** software to get familiar with
 4. By choosing one of the motors named as `[ID:29]Seed58`, coresponded motor can be manipulated. 
 
 <img width = "300" hight = "200" src="./pics/moveThemotors.png" >
+
+## Control the Hand using Pypot
+> `pypot` package is needed to be installed.
+```shell
+$ pip install pypot
+```
+
+Python script can be found [here](./src/robotic_hand/control.py)
+
+> To find motor ids, the port that hand is connected to, should get scanned. So, first we need to find the correct port.
+
+```py
+ports = pypot.dynamixel.get_available_ports()
+print('available ports:', ports)
+
+if not ports:
+    raise IOError('No port available.')
+
+port = ports[-1] ### COM6 : The port that hand is connetd to
+dxl_io = pypot.dynamixel.DxlIO(port)
+```
+> For increasing the speed of the program, only a range, which contains motor Ids from , is scanned.
+
+```py
+motor_IDs = dxl_io.scan(range(10, 35))
+```
+
+> For writting an angle to the hand, a dictionary contaning `motor ids` and `positions` is needed.
+
+```py
+motor_pose = {}
+for motor in motor_IDs:
+    motor_pose[motor] = 0 ### setting the default value for motor positions
+```
+
+> By passing the desired angle to the dictionary, and to the hand, we can witness a smooth movement.\
+> To make it more understandable, an `Enum` is used to specify each motor ID is connected to which part of the hand. 
+```py
+class Motor(Enum):
+    wrist_R = 23 ### Wrist rotary movement
+    wrist_BF = 25 ### Wrist back forth movement
+    thumb = 27
+    fingers = 29
+
+### Setting thumb position to 90
+motor_pose[Motor.thumb.value] = 90
+dxl_io.set_goal_position(motor_pose)
+```
+
+
+More information can be found [here](https://poppy-project.github.io/pypot/dynamixel.html) and [here](https://docs.poppy-project.org/en/software-libraries/pypot)
