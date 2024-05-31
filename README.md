@@ -17,6 +17,7 @@ Control A Robotic Hand using Gaze Tracker headset
 
 ### [Robotic Hand](#robotic-hand-1)
 + [Setup](#setup)
++ [Control the movement - Python](#control-the-hand-using-pypot)
 
 
 
