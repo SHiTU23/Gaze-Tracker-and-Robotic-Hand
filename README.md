@@ -6,7 +6,7 @@ Control A Robotic Hand using Gaze Tracker headset
 <br>
 
 ## Content
-### Gaze Tracker 
+### [Gaze Tracker](#gaze-tracker-headset) 
 + [Headset SetUp](#headset-setup)
     + [Headset Cameras Adjustment](#adjust-the-headset-cameras)
     + [Start Calibration](#start-calibrating)
@@ -15,8 +15,13 @@ Control A Robotic Hand using Gaze Tracker headset
         + [Export Data from Recordings](#export-data-from-recordings)
     + [IPC Backbone - Real-Time Data](#ipc-backbone---real-time-data)
 
+### [Robotic Hand](#robotic-hand-1)
+
+
 
 <br>
+
+# Gaze Tracker Headset
 
 ## Headset Setup
 A few steps should be taken to get ready for using data.
@@ -176,3 +181,33 @@ print(message[b'gaze_point_3d'])
 > ***Note*** : ***`Pupile Capture`*** should be kept open while data is being read.
 
 More information about [IPC Backbone](https://docs.pupil-labs.com/core/developer/network-api/#ipc-backbone) and [data format](https://docs.pupil-labs.com/core/developer/#pupil-datum-format)
+
+
+# Robotic Hand
+
+## Setup
+RH4D Advanced Manipulator is the robot hand that is being used for this project.
+
+First, it is better to start with ***`Roboplus`*** software to get familiar with it.
+
+> `RoboPlus` can be found from [here](https://robotis.co.uk/software/roboplus-1-0.html) or directly downloaded from [here.](http://en.robotis.com/service/download.php?no=14)
+
+1. Run the program and go to `Epert > Dynamixel Wizard`.
+
+<img width = "300" hight = "200" src="./pics/roboplus.png" >
+
+
+2. Choose right port and get connected to the robotic hand.
+
+<img width = "300" hight = "200" src="./pics/choose_port.png" >
+
+3. Search the port to find motors.
+
+<img width = "300" hight = "200" src="./pics/searchingForPort.png" >
+
+> ***Note***: If you do not have `1000000 bps` in your search table you might need some configuration. Follow the steps in [here](https://kb.seedrobotics.com/doku.php?id=dynamixel:dynwzrd_ctrltables) \
+> ***Note***: You may find the montioned file in the ***`Conf`*** directory in the given path.
+
+4. By choosing one of the motors named as `[ID:29]Seed58`, coresponded motor can be manipulated. 
+
+<img width = "300" hight = "200" src="./pics/moveThemotors.png" >
