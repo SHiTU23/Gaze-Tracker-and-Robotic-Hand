@@ -15,6 +15,7 @@ for port in ports:
         print(f'Connected to {port}!')
         break
     except:
+        ### THE PORT CANNOT GET OPENED
         pass
 
 
