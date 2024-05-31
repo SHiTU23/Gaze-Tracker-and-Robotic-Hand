@@ -20,7 +20,7 @@ Control A Robotic Hand using Gaze Tracker headset
 
 ## Headset Setup
 A few steps should be taken to get ready for using data.
-> Install **Pupil Core Bundles** from [here](https://docs.pupil-labs.com/core/getting-started/)
+> Install **Pupil Core Bundles** software from [here](https://docs.pupil-labs.com/core/getting-started/)
 
 ### Adjust the Headset Cameras
 First, adjust the cameras to get the most accurate result from caliberation.
