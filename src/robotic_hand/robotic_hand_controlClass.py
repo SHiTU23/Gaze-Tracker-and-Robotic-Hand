@@ -59,7 +59,12 @@ class hand_control:
             print("XXX NO MOTOR FOUND XXX")
             exit()
         
-    def all_motors_goTo_Pose(self, angle=0): # angle between -150, 150
+    def all_motors_goTo_Pose(self, angle=0): 
+        """
+        angle range between -150, 150 , 
+        defualt value is 0
+        """
+
         for motor in _motor_IDs:
             self._motor_pose[motor] = angle ### setting an angle for motor positions
 
@@ -68,15 +73,21 @@ class hand_control:
 
     
     def goTo_single(self, motor_name, angle): 
-        ## motor name: wrist_r / wrist_bf / thumb / middle_fingers
-        ## angle : -150 to 150 
+        """
+         motor name: wrist_r / wrist_bf / thumb / middle_fingers
+         angle range : -150 to 150 
+        """
         motor_name.lower()
         self._motor_pose[self.motor_IDs_list[motor_name]] = angle
         _dxl_io.set_goal_position(self._motor_pose)
         print( f"motor {motor_name} with ID of {self.motor_IDs_list[motor_name]} Moved to ", angle)
 
     def goTo_multiple(self, motor_names_and_angles):
-        ### motor_names_and_angles is a dict contains of motor name and desired pose
+        """
+         motor_names_and_angles is a dict contains of motor name and desired pose
+
+         Ex: motors= {"thumb": 45, "middle_fingers": 100}
+        """
         for motor in motor_names_and_angles:
             angle = motor_names_and_angles[motor]
             motor_name = self.motor_IDs_list[motor]
