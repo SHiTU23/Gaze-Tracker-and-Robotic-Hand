@@ -207,12 +207,12 @@ First, it is better to start with ***`Roboplus`*** software to get familiar with
 
 <img width = "300" hight = "200" src="./pics/searchingForPort.png" >
 
-> ***Note***: If you do not have `1000000 bps` in your search table you might need some configuration. Follow the steps in [here](https://kb.seedrobotics.com/doku.php?id=dynamixel:dynwzrd_ctrltables) \
+> ***Note***: If you do not have `1000000 bps` in your search table you might need some configuration. Follow the steps in [here](https://kb.seedrobotics.com/doku.php?id=dynamixel:dynwzrd_ctrltables) 
 > ***Note***: You may find the montioned file in the ***`Conf`*** directory in the given path.
 
 4. By choosing one of the motors named as `[ID:29]Seed58`, coresponded motor can be manipulated. 
 
-<img width = "300" hight = "200" src="./pics/moveThemotors.png" >
+<img width = "300" hight = "200" src="./pics/move.png" >
 
 ## Control the Hand using Pypot
 > `pypot` package is needed to be installed.
