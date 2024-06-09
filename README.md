@@ -16,9 +16,11 @@ Control A Robotic Hand using Gaze Tracker headset
     + [IPC Backbone - Real-Time Data](#ipc-backbone---real-time-data)
 
 ### [Robotic Hand](#robotic-hand-1)
-+ [Setup](#setup)
++ [Move robotic hand via RoboPlus](#move-the-robotic-hand-via-roboplus)
 + [Control the movement - Python](#control-the-hand-using-pypot)
-
++ [Robotic Hand Control - Class](#modules-from-robotic_hand_controlclass)
+    + [Class Modules](#modules-from-robotic_hand_controlclass)
+    + [Motor Names](#motor_name)
 
 
 <br>
@@ -186,10 +188,9 @@ More information about [IPC Backbone](https://docs.pupil-labs.com/core/developer
 
 
 # Robotic Hand
-
-## Setup
 RH4D Advanced Manipulator is the robotic hand that is being used for this project.
 
+## Move the robotic hand via RoboPlus
 First, it is better to start with ***`Roboplus`*** software to get familiar with it.
 
 > `RoboPlus` can be found [here](https://robotis.co.uk/software/roboplus-1-0.html) or directly downloaded from [here.](http://en.robotis.com/service/download.php?no=14)
@@ -264,3 +265,75 @@ dxl_io.set_goal_position(motor_pose)
 
 
 More information can be found [here](https://poppy-project.github.io/pypot/dynamixel.html) and [here](https://docs.poppy-project.org/en/software-libraries/pypot)
+
+## Robotic Hand Control Class
+This class helps to move the robotic hand more easily.
+Here is some explanation of its modules.
+<br>
+
+Once the motorIDs are found from [RoboPlus software](#move-the-robotic-hand-via-roboplus), define a range that includes all motors' ids.
+> Here, the motors I used have IDs from 21 to 29. Therefore, I defined a range from 10 to 35.
+
+***This range increases the speed of scanning the port for finding motor IDs in the code.***
+
+```py
+    from robotic_hand_controlClass import *
+
+    motorID_scanningRange = [10, 35]
+    hand = hand_control(motorID_scanningRange)
+```
+
+### Modules from `Robotic_hand_controlClass`
+
+*  `goTo_homePose()`\
+ *By calling this function, all motors will go to 0 degree.*
+
+* `all_motors_goTo_Pose(angle)`\
+ *This function actuates all motors at once. default value for `angle` is 0, however, it can be changed by passing the destination angle.*
+  ```py
+    hand.all_motors_goTo_Pose(100)
+  ```
+
+* `goTo_single(Motor_Name, angle)`\
+ *Only one motor moves to the given `angle`. For setting which motor moves, choose a motor from [Motor_Name](#motor_name) enum.*
+  ```py
+    hand.goTo_single(Motor_Name.thumb, 45)
+  ```
+
+* `hand.goTo_multiple(motor_names_and_angles)`\
+ *this function can actuate more than one motor at the same time. The argument should be a `dict` including motor names and their destination angles. For defining motors names refere to [Motor_Name](#motor_name) enum.*
+
+  ```py
+    motors = {Motor_Name.middle_fingers:100, Motor_Name.wrist_BF:150}
+    hand.goTo_multiple(motors)
+  ```
+* `open_fingers(angle)` and `close_fingers(angle)`\
+ *Defualt angle for openning and closing fingers are -150 and 150, respectively. However, it is possible to moiodify these angles by passing the angle you want to their arguments.*
+  ```py
+    hand.open_fingers()
+
+    hand.close_fingers(-120)
+  ```
+
+
+### `Motor_Name`
+ This enum helps to choose the correct name for the motor you want to manipulate. 
+
+> For this project, only four motors are available.\
+ ***Therefore if you have more, you may need to change some parts of the Robotic_hand_controlClass.***
+
+ ```py
+    Motor_Name.wrist_R   ## wrist_R : rotary motor 
+    Motor_Name.wrist_BF  ## wrist_BF: motor for movement in back and forth
+    Motor_Name.thumb    
+    Motor_Name.middle_fingers 
+ ```
+
+ These names can be used as arguments for `goTo_single()` and `goTo_multiple()` modules.
+
+ ```py
+    hand.goTo_single(Motor_Name.thumb, 45)
+
+    motors = {Motor_Name.middle_fingers:100, Motor_Name.wrist_BF:150}
+    hand.goTo_multiple(motors)
+ ```
