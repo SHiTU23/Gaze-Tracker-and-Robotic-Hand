@@ -3,7 +3,7 @@ import msgpack
 from time import sleep
 
 
-class gaze_tracker:
+class gaze_data:
     def __init__(self, ip='localhost', port=50020):
         """
             port : The port defaults to 50020. Set in Pupil Capture GUI.
@@ -51,7 +51,7 @@ class gaze_tracker:
 
 
 if __name__ == "__main__":
-    gaze_data = gaze_tracker()
+    gaze_data = gaze_data()
 
     while True:
         surface_data = gaze_data.gaze_coordinate_on_surface()
