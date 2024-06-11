@@ -2,7 +2,7 @@ import pygame
 from enum import Enum
 import numpy as np
 
-class position(Enum):
+class options_position(Enum):
     center_right = "center_right"
     center_left = "center_left"
     center = "center"
@@ -18,6 +18,9 @@ class hand_operation_menu:
     pygame.display.set_caption('MENU')
 
     def __init__(self):
+        """
+            The menu screen will be full screen
+        """
         _screen_info = pygame.display.Info()
         self._screen_width = _screen_info.current_w
         self._screen_hight = _screen_info.current_h
@@ -27,7 +30,7 @@ class hand_operation_menu:
         self.rect_corner_y = 0
         self.menu_size = [0, 0]
 
-    def add_menu(self, option_pose=position.center, rect_size=[(screen_width/2.5), (screen_height/2.5)], color=(255, 255, 255), text=''):
+    def add_menu(self, option_pose=options_position.center, rect_size=[(screen_width/2.5), (screen_height/2.5)], color=(255, 255, 255), text=''):
         font_size = int(rect_size[1]/3)
         self.font = pygame.font.SysFont('Arial', font_size)
         self.menu_size = rect_size
@@ -90,8 +93,8 @@ if __name__=="__main__":
     
     running = True
     while running:
-        left_menu.add_menu(position.center_left, color=(10, 150, 10), text='Open Fingers')
-        right_menu.add_menu(position.center_right, color=(200, 10, 10), text='Close Fingers')
+        left_menu.add_menu(options_position.center_left, color=(10, 150, 10), text='Open Fingers')
+        right_menu.add_menu(options_position.center_right, color=(200, 10, 10), text='Close Fingers')
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
         mouse_x = np.interp(mouse_x, [0, 1600], [0, 1]) 
