@@ -28,5 +28,5 @@ while True:
     
     print(f"{topic}: {message}") ### The whole data
     ### Coordinates of the point that is being looked at:
-    # print(message[b'gaze_point_3d'])
+    print(message[b'gaze_point_3d'])
     sleep(3)
