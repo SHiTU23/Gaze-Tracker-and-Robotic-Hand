@@ -488,7 +488,8 @@ For checking if the option has been looked at, use `clicked` module.
       gaze_choice = 'close'
 ```
 
-Result of the project:
+Result of the project:\
+[***Here is a video of the project***](./pics/project_reports/control%20by%20gazing%20on%20the%20options.mp4)
 
 When the `Close Fingers` is looked at, the robotic hand got fisted.
 <img width = "500" hight = "200" src="./pics/project_reports/Closed_hand.png" >
