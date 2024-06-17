@@ -14,6 +14,10 @@ Control A Robotic Hand using Gaze Tracker headset
     + [Pupil Remote - Record Data](#pupil-remote---record-data)
         + [Export Data from Recordings](#export-data-from-recordings)
     + [IPC Backbone - Real-Time Data](#ipc-backbone---real-time-data)
+      + [Gaze data - Python Code](#gaze-data---python)
+      + [Gaze data on a 2D surface](#gaze-data-on-a-surface)
+        + [Define a surface](#defining-the-surface-using-apriltag-marker)
+        + [Gaze data on surface - Python Code](#gaze-coordinates-on-surface---python)
 
 ### [Robotic Hand](#robotic-hand-1)
 + [Move robotic hand via RoboPlus](#move-the-robotic-hand-via-roboplus)
@@ -141,6 +145,9 @@ More information can be found [here](https://docs.pupil-labs.com/core/getting-st
 Using `IPC Backbone` gives access to the data from Pupil capture and Service, realtime. \
 It uses ZeroMQ's `PUB-SUB`(Publisher-Subscriber) pattern for one-to-many communication. Note that when you use a SUB socket you must set a subscription using zmq_setsockopt() and SUBSCRIBE, as in this code. [More Info](https://zguide.zeromq.org/docs/chapter1/#Getting-the-Message-Out)
 
+### Gaze data - Python
+[***gaze data Python Script***](./src/gaze_tracker/pupil_backbone.py)
+
 For IPC Backbone both the IP address and the session's unique port are needed:
 
 ```py
@@ -187,6 +194,94 @@ print(message[b'gaze_point_3d'])
 More information about [IPC Backbone](https://docs.pupil-labs.com/core/developer/network-api/#ipc-backbone) and [data format](https://docs.pupil-labs.com/core/developer/#pupil-datum-format)
 
 
+## Gaze Data on a Surface
+By definig a 2D surface, like a monitor or a paper, only data withing that surface will be given.
+
+> To define a surface, at least one `AprilTag` is needed. These tags can be recognized automatically by the gaze tracker headset.
+
+### Apriltag
+There are about 7 families of Apriltags that can be recognized by headset. Note to change the name of the tag you are using in the `Pupil software`, under `Marker Detection Parameters` menu, too.
+
+<img width = "250" hight = "250" src="./pics/surfaceTracker_settings.png" >
+
+<br>
+
+> ***The Apriltag marker used in this project:***\
+> Although it is blured, the gaze tracker headset could recognize it very easily.
+<img width = "300" hight = "200" src="./pics/AprilTag/tag25_09_00022-resized.png" >
+
+
+### Defining the surface using [Apriltag marker](#apriltag)
+1. The person wearing the headset should be positions in front of the surface.
+    >***Note*** if you look at the surface from the side, it may not work very good, as a 2D surface is being defined not a 3D.
+2. Once the Apriltag is detected by headset, press `add surface` button in `Pupil software`.
+
+3. Then, `freeze the scene` to define the surface more easily.\
+***Otherwise, as your head will have small movements, the corners of the surface will move constantly.***
+    <img width = "300" hight = "200" src="./pics/freezeScene_button.png" >
+
+4. Define the entire screen by `editing the surface`. 
+    + There will be two buttons on top left of the apriltag on the screen. One of them is `edit surface`.  
+    + drag each corner and define your desired surface.
+    <img width = "300" hight = "200" src="./pics/define_surface.png" >
+
+Now the surface is defined and its data can be used via API.\
+`norm pose` of `gaze on surface` data is being used here. This gives a value from `0 to 1` corresponding to the gaze location inside the defined surface.
+
+> ***NOTE KEEP THE SCREEN FROZE*** *WHILE YOU ARE USING ITS DATA.* Otherwise it deos not give corecct values for the gaze. 
+>
+> ***NOTE*** Try to keep the head position as when you froze the screen to have the most accurate data.
+
+Motre information about [Surface tracking](https://docs.pupil-labs.com/core/software/pupil-capture/#surface-tracking)
+
+
+### Gaze Coordinates on Surface - Python
+Same as recieving gaze data using API discussed [here](#ipc-backbone---real-time-data), data for `surface` can be obtained through a request. \
+***Note*** to have a surface defined in `Pupil Software` first.
+
+[***Gaze Data on Surface Python Script***](./src/gaze_tracker/gaze_on_surface.py)
+
+```py
+  while True:
+    subscriber = ctx.socket(zmq.SUB)
+    subscriber.connect(f'tcp://{ip}:{sub_port}')
+    subscriber.subscribe('surfaces.')  
+
+    topic, payload = subscriber.recv_multipart()
+    message = msgpack.loads(payload)
+    
+    print(f"{topic}: {message}") ### The whole data
+    ### Coordinates of the point that is being looked at:
+    print(message[b'gaze_on_surfaces'][0][b'norm_pos']) ### Valur between 0 - 1
+
+```
+
+## Gaze Tracker Class
+This class contains both gaze data on `World` and on `specific surface`.
+
+[***Gaze Tracker Class Python script***](./src/gaze_tracker/gaze_tracker.py)
+
+```py
+  from gaze_tracker.gaze_tracker import gaze_data
+
+  gaze_data = gaze_data()
+```
+***Note*** If you are using this class in another directory, you need to give a relative path to have access to the Class. 
+
+#### Gaze data
++ ***Gaze_Coordinate( )*** : Gives the `[x, y, z]` position of a point that is looked at in `World` environment. 
+  ```py
+    gaze_pose = gaze_data.gaze_coordinate()
+    print(f"gaze: {gaze_pose}")
+  ```
++ ***gaze_coordinate_on_surface( )*** : Gives normalized pose of the gaze. `[x, y]` position of the point in the defined surface.  
+  ```py
+    surface_data = gaze_data.gaze_coordinate_on_surface()
+    print(f"surface: {surface_data}")
+  ``` 
+
+<br>
+
 # Robotic Hand
 RH4D Advanced Manipulator is the robotic hand that is being used for this project.
 
@@ -208,7 +303,7 @@ First, it is better to start with ***`Roboplus`*** software to get familiar with
 
 <img width = "300" hight = "200" src="./pics/searchingForPort.png" >
 
-> ***Note***: If you do not have `1000000 bps` in your search table you might need some configuration. Follow the steps in [here](https://kb.seedrobotics.com/doku.php?id=dynamixel:dynwzrd_ctrltables) 
+> ***Note***: If you do not have `1000000 bps` in your search table you might need some configuration. Follow the steps in [here](https://kb.seedrobotics.com/doku.php?id=dynamixel:dynwzrd_ctrltables) \
 > ***Note***: You may find the montioned file in the ***`Conf`*** directory in the given path.
 
 4. By choosing one of the motors named as `[ID:29]Seed58`, coresponded motor can be manipulated. 
@@ -221,7 +316,7 @@ First, it is better to start with ***`Roboplus`*** software to get familiar with
 $ pip install pypot
 ```
 
-Python script can be found [here](./src/robotic_hand/control.py)
+[***Hand Conrtol Python Script***](./src/robotic_hand/control.py)
 
 > To find motor ids, the port that hand is connected to, should get scanned. So, first we need to find the correct port.
 
@@ -270,6 +365,8 @@ More information can be found [here](https://poppy-project.github.io/pypot/dynam
 This class helps to move the robotic hand more easily.
 Here is some explanation of its modules.
 <br>
+
+[***Robot hand Control Class***](./src/robotic_hand/control.py)
 
 Once the motorIDs are found from [RoboPlus software](#move-the-robotic-hand-via-roboplus), define a range that includes all motors' ids.
 > Here, the motors I used have IDs from 21 to 29. Therefore, I defined a range from 10 to 35.
@@ -337,3 +434,4 @@ Once the motorIDs are found from [RoboPlus software](#move-the-robotic-hand-via-
     motors = {Motor_Name.middle_fingers:100, Motor_Name.wrist_BF:150}
     hand.goTo_multiple(motors)
  ```
+
