@@ -44,6 +44,7 @@ class gaze_data:
 
         topic, _payload = _subscriber.recv_multipart()
         message = msgpack.loads(_payload)
+        # print(message)
         gaze_position = message[b'gaze_on_surfaces'][0][b'norm_pos'] ### [x, y]
         # print(f"gaze on surface: {gaze_position}") ### The whole data
         return gaze_position
@@ -57,10 +58,9 @@ if __name__ == "__main__":
         surface_data = gaze_data.gaze_coordinate_on_surface()
         print(f"surface: {surface_data}") ### norm value of position(from 0 to 1)
 
-        gaze_pose = gaze_data.gaze_coordinate()
-        print(f"gaze: {gaze_pose}")
-        # ### Coordinates of the point that is being looked at:
-        # print(message[b'gaze_point_3d'])
+        # gaze_pose = gaze_data.gaze_coordinate()
+        # print(f"gaze: {gaze_pose}")
+
         print("################################### next ###########################################")
 
         sleep(3)
