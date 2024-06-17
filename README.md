@@ -18,6 +18,7 @@ Control A Robotic Hand using Gaze Tracker headset
       + [Gaze data on a 2D surface](#gaze-data-on-a-surface)
         + [Define a surface](#defining-the-surface-using-apriltag-marker)
         + [Gaze data on surface - Python Code](#gaze-coordinates-on-surface---python)
+      + [Gaze Tracker Class - Python Code](#gaze-tracker-class)
 
 ### [Robotic Hand](#robotic-hand-1)
 + [Move robotic hand via RoboPlus](#move-the-robotic-hand-via-roboplus)
@@ -25,6 +26,10 @@ Control A Robotic Hand using Gaze Tracker headset
 + [Robotic Hand Control - Class](#modules-from-robotic_hand_controlclass)
     + [Class Modules](#modules-from-robotic_hand_controlclass)
     + [Motor Names](#motor_name)
+
+### [Projects](#projects)
++ [Control Robotic Hand by gazing at a menu](#control-robotic-hand-by-gazing-at-a-menu)
+  + [menu class](#menu)
 
 
 <br>
@@ -435,3 +440,58 @@ Once the motorIDs are found from [RoboPlus software](#move-the-robotic-hand-via-
     hand.goTo_multiple(motors)
  ```
 
+ # Projects
+ ## Control robotic hand by gazing at a menu 
+ For this project, a screen contaning two options is created. `Open fingers` and `Close fingers`.\
+ By looking at each of them, the robotic hand will respond accordingly.
+
+ The apriltag is defined directly in [menu class](#menu). Therefore, if you are using another marker than `tag25-09` you may need to change the defined path in the code. 
+
+***Dependencies :***
+ > `pygame` is used for drawing the options and create the scree.  
+ > `Numpy` is used for normalizing the values.
+
+[***Main Python Script***](./src/projects/choose_from_menu/control_Robot_from_menu.py)
+
+ ### Menu
+[***Menu Python Script***](./src/projects/choose_from_menu/menu.py)
+
+A class is defined for menu to creat options on screen more easily.\
+Therefore, it's better to define each option as a `menu object`.
+
+```py
+  from menu import hand_operation_menu, options_position
+
+  menu_open_option = hand_operation_menu()
+  menu_close_option = hand_operation_menu()
+```
+
+For `Adding options` to the menu use `add_menu` module. 
+```py
+  menu_open_option.add_menu(options_position.center_left, color=(10, 150, 10), text='Open Fingers')
+  menu_close_option.add_menu(options_position.center_right, color=(200, 10, 10), text='Close Fingers')
+```
+> The postion of the options can be defined using `options_position` enum. 
+```py
+class options_position(Enum):
+    center_right = "center_right"
+    center_left = "center_left"
+    center = "center"
+```
+For checking if the option has been looked at, use `clicked` module.
+> Gets `[x, y]` normalized coordinates. (The output of [gaze on surface](#gaze-coordinates-on-surface---python).)
+> This will return `True` is it was looked at and `False` is not.
+```py
+  if menu_open_option.clicked(gaze_coordinate):
+      gaze_choice = 'open'
+  elif menu_close_option.clicked(gaze_coordinate):
+      gaze_choice = 'close'
+```
+
+Result of the project:
+
+When the `Close Fingers` is looked at, the robotic hand got fisted.
+<img width = "500" hight = "200" src="./pics/project_reports/Closed_hand.png" >
+
+When the `Open Fingers` is looked at, the robotic hand got released.
+<img width = "500" hight = "200" src="./pics/project_reports/open_hand.png" >
