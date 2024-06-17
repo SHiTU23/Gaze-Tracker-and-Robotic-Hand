@@ -1,9 +1,12 @@
 # Gaze-Tracker
-Control A Robotic Hand using Gaze Tracker headset
+Control `RH4D` Robotic Hand using `Pupil Core` Gaze Tracker headset.
 
--- mention what gaze tracker is being used and what is the output
+<img width = "500" hight = "200" src="./pics/RoboticHand_gazeTracker.jpeg">
 
 <br>
+
+Here some basic of controling robotic hand and using Gaze tracker data is explained. \
+Also some cool projects are developed implementing these hardwares.
 
 ## Content
 ### [Gaze Tracker](#gaze-tracker-headset) 
