@@ -29,9 +29,26 @@ class gaze_data:
         topic, _payload = _subscriber.recv_multipart()
         message = msgpack.loads(_payload)
         gaze_position = message[b'gaze_point_3d']
-        # print(f"gaze: {gaze_position}")
+        
+        # print(f"message: {message}")
         return gaze_position
     
+    def worldGaze_norm(self):
+        """
+            Return Value: gaze 2d coordinate [x, y] from 0-1
+            x dir: leftside = 0, right = 1
+            y dir: up = 1, down = 0
+        """
+        _subscriber = self._ctx.socket(zmq.SUB)
+        _subscriber.connect(f'tcp://{self.ip_address}:{self._sub_port}')
+        _subscriber.subscribe('gaze.')  # receive all gaze messages
+
+        topic, _payload = _subscriber.recv_multipart()
+        message = msgpack.loads(_payload)
+        gaze_position = message[b'norm_pos']
+        
+        return gaze_position
+
     def gaze_coordinate_on_surface(self):
         """
             Return Value: Norm position of gaze on serface [x, y]
@@ -55,11 +72,11 @@ if __name__ == "__main__":
     gaze_data = gaze_data()
 
     while True:
-        surface_data = gaze_data.gaze_coordinate_on_surface()
-        print(f"surface: {surface_data}") ### norm value of position(from 0 to 1)
+        # surface_data = gaze_data.gaze_coordinate_on_surface()
+        # print(f"surface: {surface_data}") ### norm value of position(from 0 to 1)
 
-        # gaze_pose = gaze_data.gaze_coordinate()
-        # print(f"gaze: {gaze_pose}")
+        gaze_pose = gaze_data.gaze_coordinate()
+        print(f"gaze: {gaze_pose}")
 
         print("################################### next ###########################################")
 
