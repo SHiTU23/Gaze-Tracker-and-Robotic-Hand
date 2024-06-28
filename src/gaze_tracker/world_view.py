@@ -7,7 +7,8 @@ import zmq
 from time import sleep 
 import os
 import shutil
-from gaze_tracker import gaze_data
+### NOTE If you want to run this code, remove '.gaze_tracker' from import
+from gaze_tracker.gaze_tracker import gaze_data 
 import time
 
 class capture_world:
@@ -56,7 +57,9 @@ class capture_world:
 
         ### take the middle frame gaze data
         sleep(_pause_time)
-        self._gaze_on_world = self._gaze.gaze_coordinate()
+        ### Norm value for gaze on world
+        self._gaze_on_world = self._gaze.worldGaze_norm()
+        print(f"gaze from class: {self._gaze_on_world}")
         sleep(_pause_time)
         end_time = time.time()
         print(f'time: {end_time-start_time}')
@@ -93,6 +96,7 @@ class capture_world:
             # Save the frame as an image
             cv2.imwrite(self.image_path, _frame)
             sleep(0.05)
+            return self.image_path
         else:
             print(f"Error: Could not read frame.")
         cap.release()
