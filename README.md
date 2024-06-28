@@ -190,6 +190,7 @@ while True:
 ```
 
 Export only the gazed point's coodinates:
+> ***NOTE*** *The value for gaze pose would be approximately from -250 to 250 in x direction*
 ```py
 ### Coordinates of the point that is being looked at:
 print(message[b'gaze_point_3d'])
@@ -260,6 +261,9 @@ Same as recieving gaze data using API discussed [here](#ipc-backbone---real-time
     print(message[b'gaze_on_surfaces'][0][b'norm_pos']) ### Valur between 0 - 1
 
 ```
+> ***NOTE*** *Norm Values will be as bellow:*\
+> + **X direction**: `Left side` : `0` , `Right side` : `1`
+> + **Y direction**: `Top` : `1` , `Bottom` : 0
 
 ## Gaze Tracker Class
 This class contains both gaze data on `World` and on `specific surface`.
