@@ -11,7 +11,7 @@ class object_detection:
         '''
             returns a list of recognized objects defined in dict of their   
             boundry box dimension and their name - 
-            boundryBox = [center_x, center_y, w, h] 
+            boundry_box = [center_x, center_y, w, h] 
         '''
         # Run inference on the source
         _results = self._model(image, save=False)  # list of Results _objects
@@ -45,8 +45,9 @@ class object_detection:
         else:
             return False
         
-    def is_an_object(self, point):
+    def is_on_object(self, point):
         '''
+            Point is on an object or not
             point is a list of x, y  
             ex: point = [510, 320]
         '''
