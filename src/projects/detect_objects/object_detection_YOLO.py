@@ -11,20 +11,25 @@ class object_detection:
         '''
             returns a list of recognized objects defined in dict of their   
             boundry box dimension and their name - 
-            boundry_box = [center_x, center_y, w, h] 
+            bounding_box = (center_x, center_y, w, h) 
         '''
         # Run inference on the source
         _results = self._model(image, save=False)  # list of Results _objects
         for obj in _results:
             _boxes = obj.boxes
             for box in _boxes:
-                _box_dimensions = box.xywh
-                _box_dimensions = _box_dimensions[0].int()
+                _box_dimensions_tensor = box.xywh
+                _box_dimensions_tensor = _box_dimensions_tensor[0].int()
 
+                ### convert tensor int to regular int
+                _x, _y, _w, _h = _box_dimensions_tensor[0].item(), _box_dimensions_tensor[1].item(), _box_dimensions_tensor[2].item(), _box_dimensions_tensor[3].item()
+                _box_dimension = (_x,_y,_w,_h)
+
+                ### name of the objects
                 _cls_id = box.cls  # Class ID of the detected object
                 _obj_name = self._model.names[int(_cls_id)]  # Convert class ID to class name
 
-                _object = {'boundry_box':_box_dimensions, 'name':_obj_name}
+                _object = {'bounding_box':_box_dimension, 'name':_obj_name}
                 self._objects.append(_object)
         return self._objects
 
@@ -52,7 +57,7 @@ class object_detection:
             ex: point = [510, 320]
         '''
         for obj in self._objects:
-            _obj_boundry_box = obj['boundry_box']
+            _obj_boundry_box = obj['bounding_box']
             if self._in_object(point,_obj_boundry_box): ### point inside the object
                 return obj
             else:
@@ -68,5 +73,5 @@ if __name__ == "__main__":
     check_point = [592, 397]
     check_point2 = [10, 20]
     object_data = objects.detect(source)
-    # print(object_data)
-    print(objects.is_an_object(check_point2))
+    print(object_data)
+    print(objects.is_on_object(check_point2))
