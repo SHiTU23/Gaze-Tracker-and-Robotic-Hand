@@ -11,7 +11,7 @@ class object_detection:
         '''
             returns a list of recognized objects defined in dict of their   
             boundry box dimension and their name - 
-            bounding_box = (center_x, center_y, w, h) 
+            bounding_box = (x, y, w, h) (x, y of top left corner)
         '''
         # Run inference on the source
         _results = self._model(image, save=False)  # list of Results _objects
@@ -23,7 +23,7 @@ class object_detection:
 
                 ### convert tensor int to regular int
                 _x, _y, _w, _h = _box_dimensions_tensor[0].item(), _box_dimensions_tensor[1].item(), _box_dimensions_tensor[2].item(), _box_dimensions_tensor[3].item()
-                _box_dimension = (_x,_y,_w,_h)
+                _box_dimension = (_x-int(_w/2),_y-int(_h/2),_w,_h)
 
                 ### name of the objects
                 _cls_id = box.cls  # Class ID of the detected object
@@ -37,15 +37,15 @@ class object_detection:
         '''
             this point is inside the box or not
             point : x, y
-            box: center_x, center_y, w, h
+            box: x, y, w, h (x, y of top left corner)
         '''
         point_x, point_y = point
         box_x, box_y, box_w, box_h = box
-        box_w =int(box_w/2)
-        box_h = int(box_h/2)
-        toleranse = 5 
-        if ((point_x > box_x-box_w-toleranse and point_x < box_x+box_w+toleranse) and
-            (point_y > box_y-box_h-toleranse and point_y < box_y+box_h+toleranse)):
+        print(f"########################### point :{point}, BOX : {box} ################################")
+        toleranse = 20 
+        if ((point_x > abs(box_x-toleranse) and point_x < box_x+box_w+toleranse) and
+            (point_y > abs(box_y-toleranse) and point_y < box_y+box_h+toleranse)):
+            print("******************************************** YOU GOT IT **************************")
             return True
         else:
             return False
@@ -56,12 +56,18 @@ class object_detection:
             point is a list of x, y  
             ex: point = [510, 320]
         '''
+        _obj_detected = False
+        _obj_data = {}
         for obj in self._objects:
             _obj_boundry_box = obj['bounding_box']
             if self._in_object(point,_obj_boundry_box): ### point inside the object
-                return obj
-            else:
-                return False
+                _obj_detected = True
+                _obj_data = obj
+                break
+        if _obj_detected == True:
+            return _obj_data
+        else:
+            return False
 
 
 
