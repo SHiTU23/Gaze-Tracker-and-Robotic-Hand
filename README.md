@@ -20,6 +20,7 @@ Control A Robotic Hand using Gaze Tracker headset
         + [`Gaze data on surface - Python Code`](#gaze-coordinates-on-surface---python)
       + [`Gaze Tracker Class - Python Code`](#gaze-tracker-class)
     + [**Take image from World Camera**](#take-an-image-from-world-camera)
+      + [Change the Pupil Core recordings save path](#change-the-pupil-core-recordings-save-path)
       + [`Capture_World Class - Python Code`](#capture_world-class)
         
 
@@ -299,6 +300,7 @@ A class has been written to make the use of the world camera easier.\
 
 [***Main Python Script***](./src/gaze_tracker/world_view.py)
 
+### Change the Pupil Core recordings save path
 > ***NOTE NOTE*** \
 >**You need to change the directory for saving recordings in `Pupil Core software`.**
 ```py
@@ -335,6 +337,7 @@ You need to define the `fps` (frame per second) of the world camera from `Pupil 
 
 + ***gaze_pose_onWorld()***
     + This will return the `gaze position` obtained in between recording the video from world camera.
+    + The value of `gaze pose` is normalized. (between 0 - 1)
 
 + ***save_frame()***
     + This module saves the `middle frame` of World from the captured video
@@ -551,3 +554,101 @@ When the `Close Fingers` is looked at, the robotic hand got fisted.
 
 When the `Open Fingers` is looked at, the robotic hand got released.
 <img width = "500" hight = "200" src="./pics/project_reports/open_hand.png" >
+
+
+## Detect Gazed Objects
+In this project, common objects are going to get detected and recognized using YOLO-v8 and their name will be shown once they are gazed at.
+
+[***Main Python Script of the project***](./src/projects/detect_objects/detect_gazed_objects.py)\
+[***Main Python Script for object detection***](./src/projects/detect_objects/object_detection_YOLO.py)
+
+> This project has three parts:
+> 1. **Take an image from world view**
+>     + Bacuase of the unability to open the world camera of the gaze tracher head set using OpenCV, a 0.2 length video is recorded remotely. [(record data from camera)](#pupil-remote---record-data) Then, the middle frame was stored. Meanwhile the gaze position is obtained. [(take image from World Camera)](#take-an-image-from-world-camera)
+> <br>
+> 2. **Detect all objects in the image**
+>     + As common objects are about to get detected and there is a pretrained model for that, training a new model was avoided. \
+> In addition, new objects can be added, however, around 100 pictures are needed for each object to train the model.
+> <br>
+> 3. **Check if the gaze pose is inside a detected object***
+>     + For the gaze tracker needs a very good calibration to marks the correct point that is looked at, a `tolerance` of 20 is considered for checking gaze position around a object.
+
+####################################
+##### OBJECT DETECTION ##############
+####################################
+
+### project steps
+
+***Note*** that you need to Change the recordings save path in Pupil Core Software. [refer here](#change-the-pupil-core-recordings-save-path)
+
+1. Take an image from world view
+    > For having the fastest speed in capturing images, the length of recording video is set to `0.2` second.  
+    > *This means, in `0.1` the frame will be stored and the gaze pose will be obtained.*
+    ```py
+      world = capture_world(worldCamera_Fps=30)
+      capture_length = 0.2 ## second **min of 0.2**
+      world.capture(capture_length)
+      world_image_path = world.save_frame()
+    ```
+2. Pass the taken image to `object detection model` to detect and recognize all objects.
+    > The path of saved frame is return from `world.save_frame()`.
+    ```py
+      ### detect objects in the image
+      img = cv2.imread(world_image_path)
+      objects = object_detection()
+      obj_data = objects.detect(img) ### [{'bounding_box':(x, y, w, h), 'name':'laptop'}, ....]
+    ```
+
+3. Obtain gaze position in World image.
+    > The normalized value for gaze pose should be mapped to the image dimension.   
+    > The reason that world image is opened by `pygame` is that it is going to be shown on the screen, too, later on.
+    ```py
+      world_image = pygame.image.load(world_image_path).convert()
+      world_image_width = world_image.get_width()
+      world_image_height = world_image.get_height()
+
+      ### get gaze position
+      gaze_point_norm = world.gaze_pose_onWorld() ###[x,y]
+
+      ### map normal values to image dimension
+      gaze_point_x = int(np.interp(gaze_point_norm[0], [0, 1], [0, world_image_width]) )
+      gaze_point_y =int(abs(world_image_height - (np.interp(gaze_point_norm[1], [0,1], [0, world_image_height]))))
+      gaze_point = (gaze_point_x, gaze_point_y)
+    ```
+
+4. Checking for a gazed object
+    > A list containing all detected objects is returned from `objects.detect(img)` in step 2.
+    > The bounding boxed will be returned as `[x, y, w, h]` which `x, y` is `top left corner coordinate` of the box arounf the detected obj.
+    > All detected objects are shown by drawing a grey rectangle around them.
+    > The gazed object will is shown by a green rectangle with its name inside.
+    > `(bounding_box[0]+20, bounding_box[1]+10)` specifies the position of the text to be written on 20 pixles to the right and 10 downwards relative to detected object's bounding box.
+    ```py
+      #### show all detected objects by drawing a grey rect around them
+      for obj in obj_data:
+        boundry_box = obj['bounding_box'] ###(x, y, w, h)
+        obj_bound_box = pygame.Rect(boundry_box)
+        pygame.draw.rect(screen, (100, 100, 100), obj_bound_box, bounding_box_thickness)
+
+      ### check if an object is being looked at
+      if objects.is_on_object(gaze_point):
+        obj_data = objects.is_on_object(gaze_point)
+        obj_name = obj_data['name']
+        print(f"Gazed Object is {obj_name}")
+
+        ### draw a bounding box around the gazed obj
+        bounding_box = obj_data['bounding_box'] ###(x, y, w, h)
+        obj_bounding_box = pygame.Rect(bounding_box)
+        pygame.draw.rect(screen, bounding_box_color, obj_bounding_box, bounding_box_thickness)
+        ### write object's name
+        text_surface = font.render(obj_name, True, bounding_box_color)
+        screen.blit(text_surface, (bounding_box[0]+20, bounding_box[1]+10))
+    ```
+For quiting the program you can press `scape` button on keyboard by writing this code block:
+> `running` is the boolean variable used in `While` loop.
+```py
+  for event in pygame.event.get():
+    if event.type == pygame.QUIT or (
+      event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
+      ):
+      running = False
+```
