@@ -1,3 +1,7 @@
 src/robotic_hand/__pycache__
 src/projects/choose_from_menu/__pycache__
 src/gaze_tracker/__pycache__
+src/projects/detect_objects/__pycache__
+src/gaze_tracker/world_camera_capture/world_frames/*.jpg
+src/gaze_tracker/world_camera_capture/world_video_capture/*
+!src/gaze_tracker/world_camera_capture/world_video_capture/readMe.txt

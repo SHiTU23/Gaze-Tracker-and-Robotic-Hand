@@ -1,0 +1,1 @@
+This directory is for saving frames of World Camera of Gaze Tracker Headset.

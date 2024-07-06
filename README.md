@@ -14,25 +14,34 @@ Also some cool projects are developed implementing these hardwares.
     + [Headset Cameras Adjustment](#adjust-the-headset-cameras)
     + [Start Calibration](#start-calibrating)
 + [Recieve Data](#recieve-data)
-    + [Pupil Remote - Record Data](#pupil-remote---record-data)
+    + [**Pupil Remote - Record Data**](#pupil-remote---record-data)
         + [Export Data from Recordings](#export-data-from-recordings)
-    + [IPC Backbone - Real-Time Data](#ipc-backbone---real-time-data)
-      + [Gaze data - Python Code](#gaze-data---python)
+    + [**IPC Backbone - Real-Time Data**](#ipc-backbone---real-time-data)
+      + [`Gaze data - Python Code`](#gaze-data---python)
       + [Gaze data on a 2D surface](#gaze-data-on-a-surface)
         + [Define a surface](#defining-the-surface-using-apriltag-marker)
-        + [Gaze data on surface - Python Code](#gaze-coordinates-on-surface---python)
-      + [Gaze Tracker Class - Python Code](#gaze-tracker-class)
+        + [`Gaze data on surface - Python Code`](#gaze-coordinates-on-surface---python)
+      + [`Gaze Tracker Class - Python Code`](#gaze-tracker-class)
+    + [**Take image from World Camera**](#take-an-image-from-world-camera)
+      + [Change the Pupil Core recordings save path](#change-the-pupil-core-recordings-save-path)
+      + [`Capture_World Class - Python Code`](#capture_world-class)
+        
 
 ### [Robotic Hand](#robotic-hand-1)
 + [Move robotic hand via RoboPlus](#move-the-robotic-hand-via-roboplus)
-+ [Control the movement - Python](#control-the-hand-using-pypot)
-+ [Robotic Hand Control - Class](#modules-from-robotic_hand_controlclass)
++ [`Control the movement - Python`](#control-the-hand-using-pypot)
++ [`Robotic Hand Control - Class`](#modules-from-robotic_hand_controlclass)
     + [Class Modules](#modules-from-robotic_hand_controlclass)
     + [Motor Names](#motor_name)
 
 ### [Projects](#projects)
 + [Control Robotic Hand by gazing at a menu](#control-robotic-hand-by-gazing-at-a-menu)
   + [menu class](#menu)
+  + [Result of the project](#result-of-the-project)
++ [Detect and Recognize Gazed Object](#detect-gazed-objects)
+  + [`Object Detection - YOLO`](#object-detection---yolo)
+  + [`Project Steps - Python Code`](#project-steps)
+  + [Result of the project](#result-of-the-project-1)
 
 
 <br>
@@ -193,6 +202,7 @@ while True:
 ```
 
 Export only the gazed point's coodinates:
+> ***NOTE*** *The value for gaze pose would be approximately from -250 to 250 in x direction*
 ```py
 ### Coordinates of the point that is being looked at:
 print(message[b'gaze_point_3d'])
@@ -263,6 +273,9 @@ Same as recieving gaze data using API discussed [here](#ipc-backbone---real-time
     print(message[b'gaze_on_surfaces'][0][b'norm_pos']) ### Valur between 0 - 1
 
 ```
+> ***NOTE*** *Norm Values will be as bellow:*\
+> + **X direction**: `Left side` : `0` , `Right side` : `1`
+> + **Y direction**: `Top` : `1` , `Bottom` : 0
 
 ## Gaze Tracker Class
 This class contains both gaze data on `World` and on `specific surface`.
@@ -287,6 +300,56 @@ This class contains both gaze data on `World` and on `specific surface`.
     surface_data = gaze_data.gaze_coordinate_on_surface()
     print(f"surface: {surface_data}")
   ``` 
+
+
+## Take an image from World Camera
+A class has been written to make the use of the world camera easier.\
+> I was not able to open the `World camera` of the gaze tracker headset using OpenCV. Therefore, I needed to record a video using [remote recording](#pupil-remote---record-data) then save a frame of it.
+
+[***Main Python Script***](./src/gaze_tracker/world_view.py)
+
+### Change the Pupil Core recordings save path
+> ***NOTE NOTE*** \
+>**You need to change the directory for saving recordings in `Pupil Core software`.**
+```py
+  ## default path for saving recordings => C:\Users\ASUS\recordings
+  ## changed the path to this => ABSOLUTE\PATH\TO\Gaze-Tracker\src\gaze_tracker\world_camera_capture\world_video_capture
+```
+<img width = "300" hight = "200" src="./pics/change_recordings_path.png" >\
+
+> ***NOTE NOTE***
+> If you want to run the `world_view.py` script you need to change the path for importing `gaze data` as bellow, otherwise it will rise an error:
+
+```py
+  ### For running the world_view.py script itself, the import `gaze_data` should be az bellow:
+  from gaze_tracker import gaze_data 
+```
+
+### `Capture_world` class
+
+You need to define the `fps` (frame per second) of the world camera from `Pupil Core Software` if it is **not** `30 fps`. 
+
+<img width = "500" hight = "200" src="./pics/worldCamera_fps.png" >
+
+```py
+  ### worldCamera_Fps is set in Pupil Core software
+  world = capture_world(worldCamera_Fps=30)
+```
+
+### Modules of `Capture_world` 
+
++  ***Capture(Length_of_video)***
+    + This function will record a `Length_of_video` long video from Wrold camera. 
+    + And, gets the `gaze position` in the middle of the recording. (Length_of_video/2)   
+    + No return value
+
++ ***gaze_pose_onWorld()***
+    + This will return the `gaze position` obtained in between recording the video from world camera.
+    + The value of `gaze pose` is normalized. (between 0 - 1)
+
++ ***save_frame()***
+    + This module saves the `middle frame` of World from the captured video
+    + Returns the saved frame `absolute path`
 
 <br>
 
@@ -491,7 +554,7 @@ For checking if the option has been looked at, use `clicked` module.
       gaze_choice = 'close'
 ```
 
-Result of the project:\
+#### Result of the project:
 [***Here is a video of the project***](./pics/project_reports/control%20by%20gazing%20on%20the%20options.mp4)
 
 When the `Close Fingers` is looked at, the robotic hand got fisted.
@@ -499,3 +562,140 @@ When the `Close Fingers` is looked at, the robotic hand got fisted.
 
 When the `Open Fingers` is looked at, the robotic hand got released.
 <img width = "500" hight = "200" src="./pics/project_reports/open_hand.png" >
+
+
+## Detect Gazed Objects
+In this project, common objects are going to get detected and recognized using YOLO-v8 and their name will be shown once they are gazed at.
+
+***Dependencies :***
+> `ultralytics` is used for detecting objects - YOLO-V8
+
+[***Main Python Script of the project***](./src/projects/detect_objects/detect_gazed_objects.py)\
+[***Main Python Script for object detection***](./src/projects/detect_objects/object_detection_YOLO.py)
+
+> This project has three parts:
+> 1. **Take an image from world view**
+>     + Bacuase of the unability to open the world camera of the gaze tracher head set using OpenCV, a 0.2 length video is recorded remotely. [(record data from camera)](#pupil-remote---record-data) Then, the middle frame was stored. Meanwhile the gaze position is obtained. [(take image from World Camera)](#take-an-image-from-world-camera)
+> <br>
+> 2. **Detect all objects in the image**
+>     + As common objects are about to get detected and there is a pretrained model for that, training a new model was avoided. \
+> In addition, new objects can be added, however, around 100 pictures are needed for each object to train the model.
+> <br>
+> 3. **Check if the gaze pose is inside a detected object***
+>     + For the gaze tracker needs a very good calibration to marks the correct point that is looked at, a `tolerance` of 20 is considered for checking gaze position around a object.
+
+### Object Detection - YOLO
+For this project, only common objects are considered to get detected. Therefore, pretrained model `yolov8n` for common objects (coco) is used.
+
+[Coco dataset](https://docs.ultralytics.com/datasets/detect/coco/#usage)\
+[Modules and Attributes for Prediction](https://docs.ultralytics.com/tasks/detect/#predict)
+
+***Dependencies :***
+> `ultralytics` is used for detecting objects - YOLO-V8
+
+[***Main Python Script for object detection***](./src/projects/detect_objects/object_detection_YOLO.py)
+
+### Modules of `object_detection` Class
+
++ ***detect(image)***
+    + Detects all object in `image`.
+    + **Returns** a list of dictionaries that defines each detected objects. The dictionary contains `bounding box dimension` and `name` of the object.
+      > `bounding_box` format is `[x, y, w, h]` which `x, y` are `top left corner` of the box.\
+    
+      *Example of the return value:* `[{'bounding_box':(x, y, w, h), 'name':'laptop'}, ....]`
+
++ ***is_on_object(point)***
+    > ***NOTE*** You should call `detect()` module already.
+    + Takes a **normalized** value for point. (between 0, 1)
+    + Checks all detected objects in `detect` step to find an object that `point` is inside its bounding box. 
+    + A `tolerance` of `20 pixels` is considered for checking boxes in `_in_object` function, which can be deleted.
+    + **Returns** the `dictionary of the object `if the point **IS** inside a bounding box.
+    + **Returns** `False` if the point **IS NOT** inside an object bounding box.
+---
+
+### project steps
+
+[***Main Python Script of the project***](./src/projects/detect_objects/detect_gazed_objects.py)
+
+***Note*** that you need to Change the recordings save path in Pupil Core Software. [refer here](#change-the-pupil-core-recordings-save-path)
+
+1. Take an image from world view
+    > For having the fastest speed in capturing images, the length of recording video is set to `0.2` second.  
+    > *This means, in `0.1` the frame will be stored and the gaze pose will be obtained.*
+    ```py
+      world = capture_world(worldCamera_Fps=30)
+      capture_length = 0.2 ## second **min of 0.2**
+      world.capture(capture_length)
+      world_image_path = world.save_frame()
+    ```
+2. Pass the taken image to `object detection model` to detect and recognize all objects.
+    > The path of saved frame is return from `world.save_frame()`.
+    ```py
+      ### detect objects in the image
+      img = cv2.imread(world_image_path)
+      objects = object_detection()
+      obj_data = objects.detect(img) ### [{'bounding_box':(x, y, w, h), 'name':'laptop'}, ....]
+    ```
+
+3. Obtain gaze position in World image.
+    > The normalized value for gaze pose should be mapped to the image dimension.   
+    > The reason that world image is opened by `pygame` is that it is going to be shown on the screen, too, later on.
+    ```py
+      world_image = pygame.image.load(world_image_path).convert()
+      world_image_width = world_image.get_width()
+      world_image_height = world_image.get_height()
+
+      ### get gaze position
+      gaze_point_norm = world.gaze_pose_onWorld() ###[x,y]
+
+      ### map normal values to image dimension
+      gaze_point_x = int(np.interp(gaze_point_norm[0], [0, 1], [0, world_image_width]) )
+      gaze_point_y =int(abs(world_image_height - (np.interp(gaze_point_norm[1], [0,1], [0, world_image_height]))))
+      gaze_point = (gaze_point_x, gaze_point_y)
+    ```
+
+4. Checking for a gazed object
+    > A list containing all detected objects is returned from `objects.detect(img)` in step 2.
+    > The bounding boxed will be returned as `[x, y, w, h]` which `x, y` is `top left corner coordinate` of the box arounf the detected obj.
+    > All detected objects are shown by drawing a grey rectangle around them.
+    > The gazed object will is shown by a green rectangle with its name inside.
+    > `(bounding_box[0]+20, bounding_box[1]+10)` specifies the position of the text to be written on 20 pixles to the right and 10 downwards relative to detected object's bounding box.
+    ```py
+      #### show all detected objects by drawing a grey rect around them
+      for obj in obj_data:
+        boundry_box = obj['bounding_box'] ###(x, y, w, h)
+        obj_bound_box = pygame.Rect(boundry_box)
+        pygame.draw.rect(screen, (100, 100, 100), obj_bound_box, bounding_box_thickness)
+
+      ### check if an object is being looked at
+      if objects.is_on_object(gaze_point):
+        obj_data = objects.is_on_object(gaze_point)
+        obj_name = obj_data['name']
+        print(f"Gazed Object is {obj_name}")
+
+        ### draw a bounding box around the gazed obj
+        bounding_box = obj_data['bounding_box'] ###(x, y, w, h)
+        obj_bounding_box = pygame.Rect(bounding_box)
+        pygame.draw.rect(screen, bounding_box_color, obj_bounding_box, bounding_box_thickness)
+        ### write object's name
+        text_surface = font.render(obj_name, True, bounding_box_color)
+        screen.blit(text_surface, (bounding_box[0]+20, bounding_box[1]+10))
+    ```
+For quiting the program you can press `scape` button on keyboard by writing this code block:
+> `running` is the boolean variable used in `While` loop.
+```py
+  for event in pygame.event.get():
+    if event.type == pygame.QUIT or (
+      event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
+      ):
+      running = False
+```
+
+> ***NOTE*** This project has a delay of aproximately 7 seconds according to yolo model.
+
+#### Result of the project: 
+[***Here is a video of the project.***](./pics/project_reports/recognize_gazed_objects.mkv) The code run in this video used `0.7` second long video capturing. 
+
+The gaze point is shown on a red point, the gazed object shown in green rectangle with its name and all other objects that have been detected are depited in grey rectangles.
+
+<img width = "500" hight = "200" src="./pics/project_reports/recognize_gazed_obj.png">
