@@ -11,19 +11,22 @@ Control A Robotic Hand using Gaze Tracker headset
     + [Headset Cameras Adjustment](#adjust-the-headset-cameras)
     + [Start Calibration](#start-calibrating)
 + [Recieve Data](#recieve-data)
-    + [Pupil Remote - Record Data](#pupil-remote---record-data)
+    + [**Pupil Remote - Record Data**](#pupil-remote---record-data)
         + [Export Data from Recordings](#export-data-from-recordings)
-    + [IPC Backbone - Real-Time Data](#ipc-backbone---real-time-data)
-      + [Gaze data - Python Code](#gaze-data---python)
+    + [**IPC Backbone - Real-Time Data**](#ipc-backbone---real-time-data)
+      + [`Gaze data - Python Code`](#gaze-data---python)
       + [Gaze data on a 2D surface](#gaze-data-on-a-surface)
         + [Define a surface](#defining-the-surface-using-apriltag-marker)
-        + [Gaze data on surface - Python Code](#gaze-coordinates-on-surface---python)
-      + [Gaze Tracker Class - Python Code](#gaze-tracker-class)
+        + [`Gaze data on surface - Python Code`](#gaze-coordinates-on-surface---python)
+      + [`Gaze Tracker Class - Python Code`](#gaze-tracker-class)
+    + [**Take image from World Camera**](#take-an-image-from-world-camera)
+      + [`Capture_World Class - Python Code`](#capture_world-class)
+        
 
 ### [Robotic Hand](#robotic-hand-1)
 + [Move robotic hand via RoboPlus](#move-the-robotic-hand-via-roboplus)
-+ [Control the movement - Python](#control-the-hand-using-pypot)
-+ [Robotic Hand Control - Class](#modules-from-robotic_hand_controlclass)
++ [`Control the movement - Python`](#control-the-hand-using-pypot)
++ [`Robotic Hand Control - Class`](#modules-from-robotic_hand_controlclass)
     + [Class Modules](#modules-from-robotic_hand_controlclass)
     + [Motor Names](#motor_name)
 
@@ -288,6 +291,54 @@ This class contains both gaze data on `World` and on `specific surface`.
     surface_data = gaze_data.gaze_coordinate_on_surface()
     print(f"surface: {surface_data}")
   ``` 
+
+
+## Take an image from World Camera
+A class has been written to make the use of the world camera easier.\
+> I was not able to open the `World camera` of the gaze tracker headset using OpenCV. Therefore, I needed to record a video using [remote recording](#pupil-remote---record-data) then save a frame of it.
+
+[***Main Python Script***](./src/gaze_tracker/world_view.py)
+
+> ***NOTE NOTE*** \
+>**You need to change the directory for saving recordings in `Pupil Core software`.**
+```py
+  ## default path for saving recordings => C:\Users\ASUS\recordings
+  ## changed the path to this => ABSOLUTE\PATH\TO\Gaze-Tracker\src\gaze_tracker\world_camera_capture\world_video_capture
+```
+<img width = "300" hight = "200" src="./pics/change_recordings_path.png" >\
+
+> ***NOTE NOTE***
+> If you want to run the `world_view.py` script you need to change the path for importing `gaze data` as bellow, otherwise it will rise an error:
+
+```py
+  ### For running the world_view.py script itself, the import `gaze_data` should be az bellow:
+  from gaze_tracker import gaze_data 
+```
+
+### `Capture_world` class
+
+You need to define the `fps` (frame per second) of the world camera from `Pupil Core Software` if it is **not** `30 fps`. 
+
+<img width = "500" hight = "200" src="./pics/worldCamera_fps.png" >
+
+```py
+  ### worldCamera_Fps is set in Pupil Core software
+  world = capture_world(worldCamera_Fps=30)
+```
+
+### Modules of `Capture_world` 
+
++  ***Capture(Length_of_video)***
+    + This function will record a `Length_of_video` long video from Wrold camera. 
+    + And, gets the `gaze position` in the middle of the recording. (Length_of_video/2)   
+    + No return value
+
++ ***gaze_pose_onWorld()***
+    + This will return the `gaze position` obtained in between recording the video from world camera.
+
++ ***save_frame()***
+    + This module saves the `middle frame` of World from the captured video
+    + Returns the saved frame `absolute path`
 
 <br>
 
