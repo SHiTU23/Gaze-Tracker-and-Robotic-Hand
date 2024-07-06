@@ -25,34 +25,6 @@ screen=pygame.display.set_mode([screen_width, screen_height])
 font_size = 36
 font = pygame.font.SysFont(None, font_size)  
 
-'''
-### worldCamera_Fps is set in Pupil Core software
-world = capture_world(worldCamera_Fps=30)
-capture_length = 1 ## second **min of 0.7**
-world.capture(capture_length)
-world_image_path = world.save_frame()
-
-### detect objects in the image
-img = cv2.imread(world_image_path)
-objects = object_detection()
-obj_data = objects.detect(img) ### [{'boundry_box':(x, y, w, h), 'name':'laptop'}, ....]
-
-### load the image for its dimension
-world_image = pygame.image.load(world_image_path).convert()
-world_image_width = world_image.get_width()
-world_image_height = world_image.get_height()
-print(f"w:{world_image_width}, h:{world_image_height}")
-
-### get gaze position
-gaze_point_norm = world.gaze_pose_onWorld() ###[x,y]
-
-### map normal values to image dimension
-gaze_point_x = int(np.interp(gaze_point_norm[0], [0, 1], [0, world_image_width]) )
-gaze_point_y =int(abs(world_image_height - (np.interp(gaze_point_norm[1], [0,1], [0, world_image_height]))))
-gaze_point = (gaze_point_x, gaze_point_y)
-print(f"gaze: {gaze_point_norm}, mapped_x: {gaze_point}")
-'''
-
 ### draw the gaze point on the image
 gaze_point_color = (255, 0, 0)  # red color in rgb
 bounding_box_color = (0, 255, 0)
@@ -60,8 +32,6 @@ gaze_point_thickness = 10
 bounding_box_thickness = 5
 
 detected_obj = ''
-
-
 
 running = True
 while running:
