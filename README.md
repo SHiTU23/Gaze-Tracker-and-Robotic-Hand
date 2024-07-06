@@ -43,7 +43,6 @@ Also some cool projects are developed implementing these hardwares.
   + [`Project Steps - Python Code`](#project-steps)
   + [Result of the project](#result-of-the-project-1)
 
-
 <br>
 
 # Gaze Tracker Headset
