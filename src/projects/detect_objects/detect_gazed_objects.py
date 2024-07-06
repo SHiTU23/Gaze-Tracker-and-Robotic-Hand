@@ -48,7 +48,7 @@ while running:
     ### detect objects in the image
     img = cv2.imread(world_image_path)
     objects = object_detection()
-    obj_data = objects.detect(img) ### [{'boundry_box':(x, y, w, h), 'name':'laptop'}, ....]
+    obj_data = objects.detect(img) ### [{'bounding_box':(x, y, w, h), 'name':'laptop'}, ....]
     print("objs:", obj_data)
 
     ### load the image for its dimension
@@ -75,11 +75,11 @@ while running:
     ### draw the gazed point on the image
     pygame.draw.circle(screen, gaze_point_color, (gaze_point_x, gaze_point_y), gaze_point_thickness)
 
+    #### show all detected objects by drawing a grey rect around them
     for obj in obj_data:
         boundry_box = obj['bounding_box'] ###(x, y, w, h)
         obj_bound_box = pygame.Rect(boundry_box)
         pygame.draw.rect(screen, (100, 100, 100), obj_bound_box, bounding_box_thickness)
-
 
     ### check if an object is being looked at
     if objects.is_on_object(gaze_point):
