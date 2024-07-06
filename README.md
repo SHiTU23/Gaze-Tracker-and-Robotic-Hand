@@ -35,7 +35,8 @@ Control A Robotic Hand using Gaze Tracker headset
 + [Control Robotic Hand by gazing at a menu](#control-robotic-hand-by-gazing-at-a-menu)
   + [menu class](#menu)
 + [Detect and Recognize Gazed Object](#detect-gazed-objects)
-  + [Project Steps](#project-steps)
+  + [`Object Detection - YOLO`](#object-detection---yolo)
+  + [`Project Steps - Python Code`](#project-steps)
 
 
 <br>
@@ -561,6 +562,9 @@ When the `Open Fingers` is looked at, the robotic hand got released.
 ## Detect Gazed Objects
 In this project, common objects are going to get detected and recognized using YOLO-v8 and their name will be shown once they are gazed at.
 
+***Dependencies :***
+> `ultralytics` is used for detecting objects - YOLO-V8
+
 [***Main Python Script of the project***](./src/projects/detect_objects/detect_gazed_objects.py)\
 [***Main Python Script for object detection***](./src/projects/detect_objects/object_detection_YOLO.py)
 
@@ -575,11 +579,38 @@ In this project, common objects are going to get detected and recognized using Y
 > 3. **Check if the gaze pose is inside a detected object***
 >     + For the gaze tracker needs a very good calibration to marks the correct point that is looked at, a `tolerance` of 20 is considered for checking gaze position around a object.
 
-####################################
-##### OBJECT DETECTION ##############
-####################################
+### Object Detection - YOLO
+For this project, only common objects are considered to get detected. Therefore, pretrained model `yolov8n` for common objects (coco) is used.
+
+[Coco dataset](https://docs.ultralytics.com/datasets/detect/coco/#usage)\
+[Modules and Attributes for Prediction](https://docs.ultralytics.com/tasks/detect/#predict)
+
+***Dependencies :***
+> `ultralytics` is used for detecting objects - YOLO-V8
+
+[***Main Python Script for object detection***](./src/projects/detect_objects/object_detection_YOLO.py)
+
+### Modules of `object_detection` Class
+
++ ***detect(image)***
+    + Detects all object in `image`.
+    + **Returns** a list of dictionaries that defines each detected objects. The dictionary contains `bounding box dimension` and `name` of the object.
+      > `bounding_box` format is `[x, y, w, h]` which `x, y` are `top left corner` of the box.\
+    
+      *Example of the return value:* `[{'bounding_box':(x, y, w, h), 'name':'laptop'}, ....]`
+
++ ***is_on_object(point)***
+    > ***NOTE*** You should call `detect()` module already.
+    + Takes a **normalized** value for point. (between 0, 1)
+    + Checks all detected objects in `detect` step to find an object that `point` is inside its bounding box. 
+    + A `tolerance` of `20 pixels` is considered for checking boxes in `_in_object` function, which can be deleted.
+    + **Returns** the `dictionary of the object `if the point **IS** inside a bounding box.
+    + **Returns** `False` if the point **IS NOT** inside an object bounding box.
+---
 
 ### project steps
+
+[***Main Python Script of the project***](./src/projects/detect_objects/detect_gazed_objects.py)
 
 ***Note*** that you need to Change the recordings save path in Pupil Core Software. [refer here](#change-the-pupil-core-recordings-save-path)
 
