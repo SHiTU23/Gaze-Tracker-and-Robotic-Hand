@@ -34,6 +34,8 @@ Control A Robotic Hand using Gaze Tracker headset
 ### [Projects](#projects)
 + [Control Robotic Hand by gazing at a menu](#control-robotic-hand-by-gazing-at-a-menu)
   + [menu class](#menu)
++ [Detect and Recognize Gazed Object](#detect-gazed-objects)
+  + [Project Steps](#project-steps)
 
 
 <br>
