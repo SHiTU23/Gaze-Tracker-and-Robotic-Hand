@@ -71,7 +71,7 @@ while running:
 
     ### worldCamera_Fps is set in Pupil Core software
     world = capture_world(worldCamera_Fps=30)
-    capture_length = 0.7 ## second **min of 0.7**
+    capture_length = 0.2 ## second **min of 0.2**
     world.capture(capture_length)
     world_image_path = world.save_frame()
 
@@ -116,7 +116,6 @@ while running:
         obj_data = objects.is_on_object(gaze_point)
         obj_name = obj_data['name']
         print(f"Gazed Object is {obj_name}")
-
 
         ### draw a bounding box around the gazed obj
         bounding_box = obj_data['bounding_box'] ###(x, y, w, h)
