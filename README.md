@@ -34,9 +34,11 @@ Control A Robotic Hand using Gaze Tracker headset
 ### [Projects](#projects)
 + [Control Robotic Hand by gazing at a menu](#control-robotic-hand-by-gazing-at-a-menu)
   + [menu class](#menu)
+  + [Result of the project](#result-of-the-project)
 + [Detect and Recognize Gazed Object](#detect-gazed-objects)
   + [`Object Detection - YOLO`](#object-detection---yolo)
   + [`Project Steps - Python Code`](#project-steps)
+  + [Result of the project](#result-of-the-project-1)
 
 
 <br>
@@ -549,7 +551,7 @@ For checking if the option has been looked at, use `clicked` module.
       gaze_choice = 'close'
 ```
 
-Result of the project:\
+#### Result of the project:
 [***Here is a video of the project***](./pics/project_reports/control%20by%20gazing%20on%20the%20options.mp4)
 
 When the `Close Fingers` is looked at, the robotic hand got fisted.
@@ -685,3 +687,12 @@ For quiting the program you can press `scape` button on keyboard by writing this
       ):
       running = False
 ```
+
+> ***NOTE*** This project has a delay of aproximately 7 seconds according to yolo model.
+
+#### Result of the project: 
+[***Here is a video of the project.***](./pics/project_reports/recognize_gazed_objects.mkv) The code run in this video used `0.7` second long video capturing. 
+
+The gaze point is shown on a red point, the gazed object shown in green rectangle with its name and all other objects that have been detected are depited in grey rectangles.
+
+<img width = "500" hight = "200" src="./pics/project_reports/recognize_gazed_obj.png">
