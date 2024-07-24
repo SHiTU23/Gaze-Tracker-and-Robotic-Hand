@@ -1,5 +1,6 @@
 # Gaze-Tracker
-Control `RH4D` Robotic Hand using `Pupil Core` Gaze Tracker headset.
++ Control `RH4D` Robotic Hand using `Pupil Core` Gaze Tracker headset.
++ Recognize Gazed Objects
 
 <img width = "500" hight = "200" src="./pics/RoboticHand_gazeTracker.jpeg">
 
