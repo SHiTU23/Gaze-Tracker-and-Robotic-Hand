@@ -1,4 +1,4 @@
-# Gaze-Tracker
+# Pupil Core Gaze Tracker and RH4D Robotic Hand
 + Control `RH4D` Robotic Hand using `Pupil Core` Gaze Tracker headset.
 + Recognize Gazed Objects
 
