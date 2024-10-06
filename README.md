@@ -1,6 +1,6 @@
-# Pupil Core Gaze Tracker and RH4D Robotic Hand
+# Pupil Core Gaze Tracker and RH4D Robotic Hand and object recognition with YOLO
 + Control `RH4D` Robotic Hand using `Pupil Core` Gaze Tracker headset.
-+ Recognize Gazed Objects
++ Recognize Gazed Objects using yolo
 
 <img width = "500" hight = "200" src="./pics/RoboticHand_gazeTracker.jpeg">
 
